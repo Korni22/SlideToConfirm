@@ -49,6 +49,9 @@ Internal states **idle → dragging → confirmed**:
   `isConfirmed` binding mirrors the state out and resets the control when set
   to `false`.
 - Right-to-left layouts mirror the travel direction.
+- The control reads `@Environment(\.isEnabled)`, so the standard `.disabled(_:)`
+  modifier dims it, grays the thumb, stops the shimmer, and makes the drag and
+  the accessibility action no-ops.
 
 ## Liquid Glass
 

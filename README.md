@@ -86,6 +86,19 @@ SlideToConfirm("slide to end trip", systemImage: "flag.checkered",
 Button("Undo") { confirmed = false }
 ```
 
+### Disabling
+
+The control honors the standard `.disabled(_:)` modifier. When disabled it dims,
+the thumb turns gray, the shimmer stops, and dragging or activating it does
+nothing:
+
+```swift
+SlideToConfirm("waiting for others…", systemImage: "person.2.fill") {
+    launch()
+}
+.disabled(!everyoneReady)
+```
+
 ### Accessibility
 
 The control is exposed to VoiceOver as a single button — dragging is not
