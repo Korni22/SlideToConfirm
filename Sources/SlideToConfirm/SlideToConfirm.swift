@@ -18,6 +18,11 @@ import SwiftUI
 /// overload when you need to reset the control: set the binding back to
 /// `false`.
 ///
+/// ### Disabling
+/// The control honors the standard `.disabled(_:)` modifier. When disabled it
+/// dims, the thumb turns gray, the shimmer stops, and dragging or activating it
+/// does nothing.
+///
 /// ### Accessibility
 /// The control is exposed to VoiceOver as a single button — dragging is not
 /// required. Activating it (double-tap) confirms directly. The shimmer is
@@ -32,6 +37,7 @@ public struct SlideToConfirm: View {
 
     @Environment(\.slideToConfirmStyle) private var style
     @Environment(\.layoutDirection) private var layoutDirection
+    @Environment(\.isEnabled) private var isEnabled
 
     @State private var dragOffset: CGFloat = 0
     @State private var isConfirmed = false
@@ -93,6 +99,7 @@ public struct SlideToConfirm: View {
             }
         }
         .frame(height: style.height)
+        .opacity(isEnabled ? 1 : 0.5)
         .sensoryFeedback(.success, trigger: isConfirmed) { _, now in now && style.hapticsEnabled }
         .sensoryFeedback(.impact(weight: .light), trigger: isDragging) { _, now in now && style.hapticsEnabled }
         .onChange(of: isConfirmed) { _, now in externalConfirmed = now }
@@ -128,13 +135,13 @@ public struct SlideToConfirm: View {
             .frame(maxWidth: .infinity)
             .padding(.horizontal, style.height)
             .opacity(isConfirmed ? 0 : 1 - Double(progress) * 0.85)
-            .shimmer(active: !isConfirmed && !isDragging)
+            .shimmer(active: isEnabled && !isConfirmed && !isDragging)
             .allowsHitTesting(false)
     }
 
     private var thumb: some View {
         Circle()
-            .fill(style.tint)
+            .fill(isEnabled ? style.tint : Color(.systemGray3))
             .overlay {
                 Image(systemName: isConfirmed ? confirmedSystemImage : systemImage)
                     .font(.system(size: thumbDiameter * 0.4, weight: .semibold))
@@ -152,13 +159,13 @@ public struct SlideToConfirm: View {
     private func dragGesture(maxOffset: CGFloat) -> some Gesture {
         DragGesture()
             .onChanged { value in
-                guard !isConfirmed else { return }
+                guard isEnabled, !isConfirmed else { return }
                 if !isDragging { isDragging = true }
                 let raw = layoutDirection == .rightToLeft ? -value.translation.width : value.translation.width
                 dragOffset = SlideGeometry.clamp(raw, maxOffset: maxOffset)
             }
             .onEnded { _ in
-                guard !isConfirmed else { return }
+                guard isEnabled, !isConfirmed else { return }
                 isDragging = false
                 let progress = SlideGeometry.progress(offset: dragOffset, maxOffset: maxOffset)
                 if SlideGeometry.isPastThreshold(progress: progress, threshold: style.threshold) {
@@ -170,7 +177,7 @@ public struct SlideToConfirm: View {
     }
 
     private func confirm() {
-        guard !isConfirmed else { return }
+        guard isEnabled, !isConfirmed else { return }
         withAnimation(.spring(duration: 0.3)) { isConfirmed = true }
         onConfirm()
     }
@@ -203,6 +210,10 @@ public struct SlideToConfirm: View {
         SlideToConfirm("slide to end trip", systemImage: "flag.checkered", isConfirmed: $bound) {}
             .slideToConfirmStyle(.init(tint: .red))
         Button("Reset bound control") { bound = false }
+
+        SlideToConfirm("waiting for others…", systemImage: "person.2.fill") {}
+            .slideToConfirmStyle(.init(tint: .green))
+            .disabled(true)
     }
     .padding(24)
 }
