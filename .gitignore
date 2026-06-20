@@ -1,0 +1,25 @@
+# Xcode / SwiftPM
+.DS_Store
+*.swp
+*~.nib
+
+## Build generated
+build/
+DerivedData/
+*.xcuserstate
+
+## Various settings
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+## SwiftPM
+.build/
+.swiftpm/
+Package.resolved
+
+## Obj-C/Swift specific
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
