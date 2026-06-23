@@ -9,9 +9,23 @@ The user drags a thumb across a track; crossing a threshold fires a single
 Reduce Motion, and can render its track with the iOS 26 **Liquid Glass**
 material.
 
+<p align="center">
+  <img src="docs/screenshots/demo.gif" width="280"
+       alt="Dragging the thumb across the track; crossing the threshold morphs the icon to a checkmark">
+</p>
+
 - **Platforms:** iOS 26+
 - **Dependencies:** none (SwiftUI only)
 - **License:** MIT
+
+## Showcase
+
+| Default | Liquid Glass | Disabled | Confirmed |
+|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/classic.png" width="190" alt="Default slide to unlock control"> | <img src="docs/screenshots/glass.png" width="190" alt="Liquid Glass track over a colourful gradient"> | <img src="docs/screenshots/disabled.png" width="190" alt="Disabled control, dimmed with a gray thumb"> | <img src="docs/screenshots/confirmed.png" width="190" alt="Confirmed control, thumb at the end with a checkmark"> |
+
+<sub>Captured on an iPhone 17 Pro simulator. Regenerate with
+[`Scripts/make-screenshots.sh`](Scripts/make-screenshots.sh).</sub>
 
 ## Installation
 
@@ -111,6 +125,12 @@ style.
 `Example/SlideToXExample.xcodeproj` is a bare iOS app that depends on the local
 package and demonstrates every configuration (including the Liquid Glass
 track). Open it and run on a simulator or device to feel the drag.
+
+The same app doubles as the screenshot harness: launched with `-UI-SCREENSHOTS`
+it renders a single full-screen variant (see `SnapshotStaging.swift`), and the
+`SlideToXExampleUITests` target drives a real slide gesture for the animation.
+`Scripts/make-screenshots.sh` orchestrates both to regenerate the README
+assets.
 
 ## License
 
