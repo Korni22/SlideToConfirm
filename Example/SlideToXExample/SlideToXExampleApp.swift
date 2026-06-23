@@ -4,7 +4,11 @@ import SwiftUI
 struct SlideToXExampleApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if let scene = SnapshotScene.current {
+                SnapshotStage(scene: scene)
+            } else {
+                ContentView()
+            }
         }
     }
 }
